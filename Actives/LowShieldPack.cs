@@ -64,9 +64,6 @@ namespace GunRev
             projectionbehav.collider.transform.position = shieldprojection.GetComponent<tk2dSprite>().sprite.WorldBottomLeft;
             projectionbehav.collider.Reinitialize();
 
-            ETGModConsole.Log(projectionbehav.collider.transform.position);
-            ETGModConsole.Log(shieldprojection.GetComponent<tk2dSprite>().sprite.WorldBottomLeft);
-            ETGModConsole.Log(shieldprojection.GetComponent<tk2dSprite>().sprite.transform.position);
             projectionbehav.collider.OnPreRigidbodyCollision += ShieldCollisionHandler;
 
             // Future Synergy to affect deterioration time
@@ -124,11 +121,18 @@ namespace GunRev
 
             if (this.m_timeElapsed >= this.timeUntilDeterioration)
             {
-                ExplosionData explosionData = DungeonDatabase.GetOrLoadByName("base_castle").sharedSettingsPrefab.DefaultExplosionData;
-                explosionData.doDamage = false;
-                Exploder.Explode(this.gameObject.GetComponent<tk2dSprite>().WorldCenter, explosionData, this.gameObject.GetComponent<tk2dSprite>().WorldCenter);
-                Destroy(this.gameObject);
+                StartCoroutine(ShieldPackExplodeEffect(3f));
             }
+        }
+
+        public IEnumerator ShieldPackExplodeEffect(float time)
+        {
+            yield return new WaitForSeconds(time * 1.1f);
+            ExplosionData explosionData = DungeonDatabase.GetOrLoadByName("base_castle").sharedSettingsPrefab.DefaultExplosionData;
+            explosionData.doDamage = false;
+            Exploder.Explode(this.gameObject.GetComponent<tk2dSprite>().WorldCenter, explosionData, this.gameObject.GetComponent<tk2dSprite>().WorldCenter);
+            Destroy(this.gameObject);
+            yield break;
         }
     }
 
@@ -156,6 +160,7 @@ namespace GunRev
                 for (float i = 0f; i <= time; i += BraveTime.DeltaTime)
                 {
                     this.gameObject.GetComponent<tk2dSprite>().scale = new Vector3(1,1,1) * (1 - (time / i));
+                    yield return new WaitForSeconds(0.2f);
                 }
                 Destroy(this.gameObject);
             yield break;

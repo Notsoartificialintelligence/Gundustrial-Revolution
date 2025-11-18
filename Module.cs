@@ -44,7 +44,6 @@ namespace GunRev
 
             OtherTools.Init();
             Module.Strings = new AdvancedStringDB();
-            StaticReferences.Init();
             CustomClipAmmoTypeToolbox.Init();
             SoundManager.Init();
 

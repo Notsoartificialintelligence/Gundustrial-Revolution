@@ -65,7 +65,8 @@ namespace GunRev
         }
         public override void Update()
         {
-            if (player.CurrentGun == gun && !StatsApplied)
+            player = PlayerOwner;
+            if (player?.CurrentGun == gun && !StatsApplied)
             {
                 StatsApplied = true;
                 foreach (Affix aff in CurrentAffixes)
@@ -79,7 +80,7 @@ namespace GunRev
                     }
                 }
             }
-            else if (player.CurrentGun != gun && StatsApplied)
+            else if (player?.CurrentGun != gun && StatsApplied)
             {
                 StatsApplied = false;
                 foreach (Affix aff in CurrentAffixes)
@@ -189,10 +190,10 @@ namespace GunRev
                 };
             }
             gun.PostProcessProjectile += PostProcessProj;
-            StartCoroutine(ShowAffixes());
+            StartCoroutine(ShowAffixes(playerOwner));
             base.OnPlayerPickup(playerOwner);
         }
-        public IEnumerator ShowAffixes()
+        public IEnumerator ShowAffixes(PlayerController pl)
         {
             foreach (Affix aff in CurrentAffixes.OrderBy(x => x.Rarity switch
             {
@@ -205,7 +206,7 @@ namespace GunRev
                 _ => 0
             }))
             {
-                OtherTools.DoRisingStringFade(aff.Text, player.CenterPosition, aff.FontColor);
+                OtherTools.DoRisingStringFade(aff.Text, pl.CenterPosition, aff.FontColor);
                 yield return new WaitForSeconds(1f);
             }
             yield break;
